@@ -31,7 +31,7 @@ Now create a .env file in the root (parent folder of server) and add your Gemini
 GEMINI_API_KEY="paste_your_key_here"
 Start the server:
 npm run dev
-It'll run on port 3001. Keep this terminal open.
+It will run on port 3001. Keep this terminal open.
 
 Step 2 — Start the frontend
 Open a new terminal and go to the client folder:
