@@ -1,15 +1,25 @@
-require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
-const express = require("express");
-const cors = require("cors");
 const { analyzeCareer } = require("../server/analyzeCareer");
 
-const app = express();
+module.exports = async (req, res) => {
+  // CORS Headers
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS,PATCH,DELETE,POST,PUT");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+  );
 
-app.use(cors());
-app.use(express.json());
+  // Handle preflight OPTIONS request
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return;
+  }
 
-// CareerLens prediction API
-app.post("/api/predict", async (req, res) => {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed. Use POST." });
+  }
+
   const { title, experience, country, techStack } = req.body;
 
   if (!title || !title.trim()) {
@@ -35,12 +45,9 @@ app.post("/api/predict", async (req, res) => {
 
     res.json(result);
   } catch (err) {
-    console.error("Vercel Function Prediction error:", err);
+    console.error("Vercel Serverless Function error:", err);
     res.status(500).json({
       error: err.message || "An unexpected error occurred during prediction."
     });
   }
-});
-
-// Export the Express app for Vercel Serverless Function deployment
-module.exports = app;
+};
